@@ -4,10 +4,14 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import static com.paloalto.utils.StopWatchUtils.getStopWatch;
+import static com.paloalto.utils.StopWatchUtils.getTotalTimeNanos;
 
 @Component
 @Setter
@@ -26,9 +30,9 @@ public class MetricFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws java.io.IOException, ServletException {
         HttpServletRequest httpRequest = ((HttpServletRequest) request);
-        long startTime = System.nanoTime();
+        StopWatch stopWatch = getStopWatch();
         chain.doFilter(request, response);
-        long processingTimeNs = System.nanoTime() - startTime;
+        long processingTimeNs = getTotalTimeNanos(stopWatch);
         if (isToAddRequestToMetric(httpRequest)) {
             metricService.increaseCount((int) processingTimeNs);
         }

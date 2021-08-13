@@ -12,6 +12,9 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.nio.charset.StandardCharsets;
 
+import static com.paloalto.utils.StopWatchUtils.getStopWatch;
+import static com.paloalto.utils.StopWatchUtils.getTotalTimeSeconds;
+
 @Slf4j
 @Service
 public class RepositoryManager {
@@ -24,8 +27,7 @@ public class RepositoryManager {
     }
 
     private void buildInMemoryCache(AnagramCache anagramTrie) {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+        StopWatch stopWatch =getStopWatch();
         log.info("started populating db into local cache");
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(dbFileName);
         if (inputStream == null) {
@@ -39,8 +41,8 @@ public class RepositoryManager {
 
             }
             anagramTrie.setSize(reader.getLineNumber());
-            stopWatch.stop();
-            log.info("finished inserting {} words to cache, cache initialization took {} seconds", reader.getLineNumber(), stopWatch.getTotalTimeSeconds());
+            double totalTimeSeconds = getTotalTimeSeconds(stopWatch);
+            log.info("finished inserting {} words to cache, cache initialization took {} seconds", reader.getLineNumber(), totalTimeSeconds);
 
         } catch (IOException e) {
             log.error("got exception during reading data from db");
