@@ -15,6 +15,7 @@ root - a -> e -> l -> p -> p -> (anagrams: apple, appel)
 1. GET /api/v1/similar?word=<some-word>
    The service is calling the cache (trie) to get the anagrams.
    The time complexity is for traversing over the tree char be char = O(wordLength) = O(1)
+   As an additional optimization, there is also spring cache on the method level. i.e, if there are 2 calls with the same word, the second call response is returned immediately (handled by Spring).  
 
 2. GET /api/v1/stats
    The service is gathering statistics for the number of calls and average time of processing the _/api/v1/similar?word=<some-word>_ api.
