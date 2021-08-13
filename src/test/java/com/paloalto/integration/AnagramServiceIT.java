@@ -17,7 +17,8 @@ public class AnagramServiceIT extends ITTestIntegrationParent {
     public static final int TOTAL_REQUESTS = 10;
     public static final int TOTAL_WORDS = 351075;
     public static Anagram EXPECTED_ANAGRAM1 = Anagram.builder().similar(new HashSet<>(Arrays.asList("appel", "pepla"))).build();
-    public static Anagram EXPECTED_ANAGRAM2 = Anagram.builder().similar(new HashSet<>(Arrays.asList("ates", "east", "etas", "sate", "seat", "seta", "teas"))).build();
+    public static Anagram EXPECTED_ANAGRAM2 = Anagram.builder().similar(new HashSet<>(Arrays.asList("apple", "pepla"))).build();
+    public static Anagram EXPECTED_ANAGRAM3 = Anagram.builder().similar(new HashSet<>(Arrays.asList("ates", "east", "etas", "sate", "seat", "seta", "teas"))).build();
 
     @Test
     public void getAllAnagrams() throws URISyntaxException {
@@ -25,9 +26,13 @@ public class AnagramServiceIT extends ITTestIntegrationParent {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isEqualTo(EXPECTED_ANAGRAM1);
 
-        result = sendGetRequest("/api/v1/similar?word=eats", Anagram.class);
+        result = sendGetRequest("/api/v1/similar?word=appel", Anagram.class);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isEqualTo(EXPECTED_ANAGRAM2);
+
+        result = sendGetRequest("/api/v1/similar?word=eats", Anagram.class);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isEqualTo(EXPECTED_ANAGRAM3);
     }
 
     @Test
@@ -35,9 +40,11 @@ public class AnagramServiceIT extends ITTestIntegrationParent {
         ResponseEntity<Anagram> result = sendGetRequest("/api/v1/similar", Anagram.class);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isEqualTo(new Anagram());
+
         result = sendGetRequest("/api/v1/similar?word", Anagram.class);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isEqualTo(new Anagram());
+
         result = sendGetRequest("/api/v1/similar?word=", Anagram.class);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isEqualTo(new Anagram());

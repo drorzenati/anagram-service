@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
@@ -20,7 +21,7 @@ public class AnagramService {
     }
 
     public Anagram getAllAnagrams(String word) {
-        Set<String> anagrams = anagramRepository.getAllAnagrams(word);
+        Set<String> anagrams = new HashSet<>(anagramRepository.getAllAnagrams(word));
         anagrams.remove(word);
         log.info("anagrams found for '{}' are {}", word, anagrams);
         return new Anagram(anagrams);
