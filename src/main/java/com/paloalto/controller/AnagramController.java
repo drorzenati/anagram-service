@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping(value = "/api")
 public class AnagramController {
@@ -26,11 +24,11 @@ public class AnagramController {
     }
 
     @GetMapping(value = "/v1/similar", produces = "application/json")
-    public Anagram getAllAnagrams(@RequestParam(value = "word") Optional<String> word) {
-        if (!word.isPresent() || word.get().length() <= 1) {
+    public Anagram getAllAnagrams(@RequestParam(value = "word") String word) {
+        if (word == null || word.length() <= 1) {
             return new Anagram();
         }
-        return anagramService.getAllAnagrams(word.get());
+        return anagramService.getAllAnagrams(word);
     }
 
     @GetMapping(value = "/v1/stats", produces = "application/json")

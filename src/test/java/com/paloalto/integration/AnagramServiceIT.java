@@ -2,9 +2,12 @@ package com.paloalto.integration;
 
 import com.paloalto.model.Anagram;
 import com.paloalto.model.Statistic;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -19,6 +22,9 @@ public class AnagramServiceIT extends ITTestIntegrationParent {
     public static Anagram EXPECTED_ANAGRAM1 = Anagram.builder().similar(new HashSet<>(Arrays.asList("appel", "pepla"))).build();
     public static Anagram EXPECTED_ANAGRAM2 = Anagram.builder().similar(new HashSet<>(Arrays.asList("apple", "pepla"))).build();
     public static Anagram EXPECTED_ANAGRAM3 = Anagram.builder().similar(new HashSet<>(Arrays.asList("ates", "east", "etas", "sate", "seat", "seta", "teas"))).build();
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void getAllAnagrams() throws URISyntaxException {
@@ -36,12 +42,15 @@ public class AnagramServiceIT extends ITTestIntegrationParent {
     }
 
     @Test
-    public void getAllAnagramsGivenEmptyWordThenEmptyResultExpected() throws URISyntaxException {
-        ResponseEntity<Anagram> result = sendGetRequest("/api/v1/similar", Anagram.class);
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody()).isEqualTo(new Anagram());
+    public void getAllAnagramsGivenNullWordThenBadRequestExceptionExpected() throws URISyntaxException {
+        thrown.expect(HttpClientErrorException.class);
+        thrown.expectMessage("Required request parameter 'word' for method parameter type String is not present");
+        sendGetRequest("/api/v1/similar", Anagram.class);
+    }
 
-        result = sendGetRequest("/api/v1/similar?word", Anagram.class);
+    @Test
+    public void getAllAnagramsGivenEmptyWordThenEmptyResultExpected() throws URISyntaxException {
+        ResponseEntity<Anagram> result = sendGetRequest("/api/v1/similar?word", Anagram.class);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isEqualTo(new Anagram());
 

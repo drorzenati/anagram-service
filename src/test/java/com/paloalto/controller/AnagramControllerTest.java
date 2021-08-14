@@ -12,7 +12,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
@@ -37,24 +36,24 @@ public class AnagramControllerTest {
     @Test
     public void getAllAnagrams() {
         when(anagramService.getAllAnagrams(WORD)).thenReturn(EXPECTED_ANAGRAM);
-        assertThat(anagramController.getAllAnagrams(Optional.of(WORD))).isEqualTo(EXPECTED_ANAGRAM);
+        assertThat(anagramController.getAllAnagrams(WORD)).isEqualTo(EXPECTED_ANAGRAM);
         verify(anagramService, times(1)).getAllAnagrams(WORD);
     }
 
     @Test
     public void getAllAnagramsGivenEmptyWordThenServiceShouldNotBeCalled() {
-        Anagram anagram = anagramController.getAllAnagrams(Optional.empty());
+        Anagram anagram = anagramController.getAllAnagrams(null);
         assertThat(anagram.getSimilar() != null && anagram.getSimilar().isEmpty()).isTrue();
         verify(anagramService, times(0)).getAllAnagrams(any());
     }
 
     @Test
     public void getAllAnagramsGivenWordWithInvalidThenServiceShouldNotBeCalled() {
-        Anagram anagram = anagramController.getAllAnagrams(Optional.of("a"));
+        Anagram anagram = anagramController.getAllAnagrams("a");
         assertThat(anagram.getSimilar() != null && anagram.getSimilar().isEmpty()).isTrue();
         verify(anagramService, times(0)).getAllAnagrams(any());
 
-        anagram = anagramController.getAllAnagrams(Optional.of(""));
+        anagram = anagramController.getAllAnagrams("");
         assertThat(anagram.getSimilar() != null && anagram.getSimilar().isEmpty()).isTrue();
         verify(anagramService, times(0)).getAllAnagrams(any());
     }
